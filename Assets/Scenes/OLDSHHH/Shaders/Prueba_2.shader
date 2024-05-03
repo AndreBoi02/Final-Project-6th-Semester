@@ -14,23 +14,23 @@ Shader "Custom/Prueba_2"
 
 
             CGPROGRAM
-            #pragma surface surf Standard fullforwardshadows
+            #pragma surface surf Lambert
 
             fixed4 MyColor;
             half MyRange;
             sampler2D MyText;
             samplerCUBE MyCube;
             float MyFloat;
-            float4 MyVector
+            float4 MyVector;
 
             struct Input {
-            float2 uv - MyTex;
-            float3 worldRefl;
+                float2 MyTex;
+                float3 worldRefl;
             };
         
             void surf(Input IN, inout SurfaceOutput o)
             {
-                o.Albedo
+                o.Albedo = MyColor;
             }
 
 
