@@ -37,6 +37,7 @@ public class BasicAgent : MonoBehaviour {
     }
 
     void FixedUpdate() {
+        m_pos = transform.position;
         Move();
         if (targetNameV == "") {
             return;

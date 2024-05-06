@@ -11,8 +11,7 @@ public class SteeringBehaviours {
         t_agent.m_pos += t_agent.m_currentVel;
     }
 
-    public void seek(BasicAgent t_agent, Vector3 t_targetV)
-    {
+    public void seek(BasicAgent t_agent, Vector3 t_targetV) {
         Vector3 desiredVel = t_targetV - t_agent.m_pos;
         float distance = distanceV(t_agent.m_pos, t_targetV);
         baseBehaviour(desiredVel, t_agent);
@@ -27,8 +26,7 @@ public class SteeringBehaviours {
     }
 
     void arrive(BasicAgent t_agent, float t_distance) {
-        if (t_distance <= t_agent.m_slowingFactor)
-        {
+        if (t_distance <= t_agent.m_slowingFactor) {
             float slowing = t_distance / t_agent.m_slowingFactor;
             t_agent.m_currentVel *= slowing;
         }
@@ -51,18 +49,18 @@ public class SteeringBehaviours {
     public void wander(BasicAgent t_agent, float t_disp, float t_radius) {
         Vector3 newWanderPos = t_agent.m_currentVel;
         newWanderPos = newWanderPos.normalized;
-        newWanderPos *= t_disp;
+        newWanderPos = new Vector3(newWanderPos.x * t_disp, .07f, newWanderPos.z * t_disp);
         Vector3 vRandom = randomVector();
-        vRandom *= t_radius;
+        vRandom = new Vector3(vRandom.x * t_radius, .07f, vRandom.z * t_radius);
         newWanderPos += vRandom;
         newWanderPos += t_agent.m_pos;
         float distance = distanceV(t_agent.m_pos, newWanderPos);
         seek(t_agent, newWanderPos);
-        if (distance <= t_agent.m_proximity) {
+        //if (distance <= t_agent.m_proximity) {
             
-        }
+        //}
         //My new implementation to make it work
-       
+
     }
 
     int currentNode = 0;
@@ -106,7 +104,7 @@ public class SteeringBehaviours {
     }
 
     Vector3 randomVector() {
-        Vector3 ret = new Vector3(Random.Range(-1, 1.1f), Random.Range(-1, 1.1f), Random.Range(-1, 1.1f));
+        Vector3 ret = new Vector3(Random.Range(-1, 1.1f), .07f, Random.Range(-1, 1.1f));
         return ret;
     }
     #endregion
