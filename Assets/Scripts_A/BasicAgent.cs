@@ -9,7 +9,6 @@ public class BasicAgent : MonoBehaviour {
     public Vector3 m_currentVel;
     public float m_maxVel;
     public float m_maxForce;
-    public float m_mass;
     public float m_maxSpeed;
     public float m_slowingFactor;
     public float m_proximity;
@@ -17,16 +16,15 @@ public class BasicAgent : MonoBehaviour {
     public Vector3 m_targetPos;
     #endregion
 
-    SteeringBehaviours behaviours;
-
     [SerializeField] Vector3 eyesPos;
     [SerializeField] List<Transform> points2Follow = new List<Transform>();
     [SerializeField] float eyesRad;
     [SerializeField] string targetNameA;
     [SerializeField] string targetNameV;
+    public Rigidbody rb;
 
     void Start() {
-        behaviours = new SteeringBehaviours();
+        rb = gameObject.GetComponent<Rigidbody>();
         m_pos = transform.position;
         if (targetNameA != "") {
             aTarget = GameObject.Find(targetNameA).GetComponent<BasicAgent>();
@@ -49,27 +47,32 @@ public class BasicAgent : MonoBehaviour {
     void Move() {
         switch (type) {
             case typeOfBehaviours.Seek:
-                behaviours.seek(this);
+                SteeringBehaviours.seek(this);
                 break;
 
             case typeOfBehaviours.Flee:
-                behaviours.flee(this);
+                SteeringBehaviours.flee(this);
                 break;
             case typeOfBehaviours.Pursuit:
-                behaviours.pursuit(this);
+                SteeringBehaviours.pursuit(this);
                 break;
             case typeOfBehaviours.Evade:
-                behaviours.evade(this);
+                SteeringBehaviours.evade(this);
                 break;
             case typeOfBehaviours.Wander:
                 //Needs to be fixed
-                behaviours.wander(this, 100, 500);
+                SteeringBehaviours.wander(this, 10f, 1f, m_targetPos);
                 break;
             case typeOfBehaviours.FollowPath:
-                behaviours.followingPath(this, points2Follow, m_proximity);
+                SteeringBehaviours.followingPath(this, points2Follow, m_proximity);
+                break;
+            case typeOfBehaviours.none:
+                //SteeringBehaviours.followingPath(this, points2Follow, m_proximity);
                 break;
         }
-        transform.position = m_pos;
+        //transform.position = m_pos;
+        //Vector3 newPos = (m_pos - transform.position).normalized;
+        //rb.velocity = newPos*2;
     }
 
     void perceptionManager() {
@@ -96,7 +99,8 @@ public class BasicAgent : MonoBehaviour {
         Pursuit,
         Evade,
         Wander,
-        FollowPath
+        FollowPath,
+        none
     }
 
     public typeOfBehaviours type = typeOfBehaviours.Seek;
