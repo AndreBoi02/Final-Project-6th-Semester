@@ -18,9 +18,12 @@ public class BasicAgent : MonoBehaviour {
     #endregion
 
     [SerializeField] Vector3 eyesPos;
+    [SerializeField] Vector3 earsPos;
     [SerializeField] float eyesRad;
+    [SerializeField] float earsRad;
     [SerializeField] string targetNameA;
     [SerializeField] string targetNameV;
+    public List<BasicAgent> agentsList = new List<BasicAgent>();
 
     void Start() {
         rb = gameObject.GetComponent<Rigidbody>();
@@ -35,13 +38,16 @@ public class BasicAgent : MonoBehaviour {
 
     void FixedUpdate() {
         m_pos = transform.position;
+        earsPos = transform.position;
+        eyesPos = m_currentVel.normalized;
+        eyesPos *= eyesRad;
+        eyesPos += transform.position;
         Move();
         if (targetNameV == "") {
             return;
         }
         m_targetPos = GameObject.Find(targetNameV).transform.position;
         perceptionManager();
-        //OnDrawGizmos();
     }
 
     void Move() {
@@ -72,21 +78,37 @@ public class BasicAgent : MonoBehaviour {
 
     void perceptionManager() {
         eyesPerception();
+        earsPerception();
     }
 
     void eyesPerception() {
         Collider[] agentsViewed = Physics.OverlapSphere(eyesPos, eyesRad);
         foreach (Collider agent in agentsViewed) {
-            if (agent.CompareTag("Agent")) {
+            if (agent.CompareTag("Agent") == this)
+            {
+                continue;
+            }
+            agentsList.Add(agent.GetComponent<BasicAgent>());
+        }
+    }
 
+    void earsPerception() {
+        Collider[] agentsViewed = Physics.OverlapSphere(earsPos, earsRad);
+        foreach (Collider agent in agentsViewed) {
+            if (agent.CompareTag("Agent")) {
+                //continue;
+                agentsList.Add(agent.GetComponent<BasicAgent>());
             }
         }
     }
 
     private void OnDrawGizmos() {
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(m_targetPos, .5f);
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(m_targetPos, eyesRad);
         Gizmos.DrawWireSphere(eyesPos, eyesRad);
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(earsPos, earsRad);
     }
 
     public enum typeOfBehaviours {
