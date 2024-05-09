@@ -8,7 +8,6 @@ public static class SteeringBehaviours {
         float distance = distanceV(t_agent.m_pos, t_agent.aTarget.m_pos);
         baseBehaviour(desiredVel, t_agent);
         arrive(t_agent, distance);
-        //t_agent.m_pos += t_agent.m_currentVel;
     }
 
     public static void seek(BasicAgent t_agent, Vector3 t_targetV) {
@@ -16,13 +15,11 @@ public static class SteeringBehaviours {
         float distance = distanceV(t_agent.m_pos, t_targetV);
         baseBehaviour(desiredVel, t_agent);
         arrive(t_agent, distance);
-        //t_agent.m_pos += t_agent.m_currentVel;
     }
 
     public static void flee(BasicAgent t_agent) {
         Vector3 desiredVel = t_agent.m_pos - t_agent.aTarget.m_pos;
         baseBehaviour(desiredVel, t_agent);
-        //t_agent.m_pos += t_agent.m_currentVel;
     }
 
     static void arrive(BasicAgent t_agent, float t_distance) {
@@ -81,7 +78,8 @@ public static class SteeringBehaviours {
         Vector3 steering = t_desiredVel - t_agent.m_currentVel;
         steering = truncateVec(steering, t_agent.m_maxForce);
         steering /= t_agent.rb.mass;
-        truncateVec(t_agent.m_currentVel + steering, t_agent.m_maxSpeed, t_agent);
+        t_agent.m_currentVel =
+        truncateVec(t_agent.m_currentVel + steering, t_agent.m_maxSpeed);
     }
 
     #region Necesary Functions
@@ -94,15 +92,6 @@ public static class SteeringBehaviours {
         res = res.normalized;
         res *= t_limit;
         return res;
-    }
-
-    static void truncateVec(Vector3 t_v, float t_limit, BasicAgent t_agent) {
-        Vector3 res = t_v;
-        if (res.magnitude <= t_limit) {
-            t_agent.rb.velocity = res;
-        }
-        res = res.normalized;
-        t_agent.rb.velocity = res * t_limit;
     }
 
     static float distanceV(Vector3 t_this, Vector3 t_other) {
